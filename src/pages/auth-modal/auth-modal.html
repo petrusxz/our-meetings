@@ -1,0 +1,42 @@
+<ion-content padding>
+
+  <form [formGroup]="signInForm" (ngSubmit)="signIn()">
+
+    <ion-list>
+
+      <ion-item>
+        <ion-label floating>E-mail</ion-label>
+        <ion-input type="text" formControlName="email"></ion-input>
+      </ion-item>
+
+      <div class="error-container">
+        <ion-note *ngIf="signInForm.get('email').hasError('pattern') && signInForm.pending">
+          Invalid e-mail.
+        </ion-note>
+        <ion-note *ngIf="!signInForm.get('email').value && signInForm.pending">
+          E-mail is required.
+        </ion-note>
+      </div>
+
+      <ion-item>
+        <ion-label floating>Password</ion-label>
+        <ion-input type="password" clearOnEdit="false" formControlName="password"></ion-input>
+      </ion-item>
+
+      <div class="error-container">
+        <ion-note *ngIf="signInForm.get('password').hasError('minlength') && signInForm.pending">
+          Password must have at least 6 characters.
+        </ion-note>
+        <ion-note *ngIf="!signInForm.get('password').value && signInForm.pending">
+          Password required.
+        </ion-note>
+      </div>
+
+    </ion-list>
+
+    <ion-row justify-content-center>
+      <button ion-button margin color="medium" type="submit">Login</button>
+    </ion-row>
+  </form>
+
+</ion-content>

@@ -1,0 +1,11 @@
+page-auth-modal {
+    ion-item {
+        padding: 0 !important;
+        &:first-child {
+            border-top: unset !important;
+        }
+        &:last-child {
+            margin-top: 8px;
+        }
+    }
+}

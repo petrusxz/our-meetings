@@ -1,0 +1,78 @@
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>New meeting</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+<ion-content padding>
+
+
+  <ion-grid>
+    <ion-row justify-content-center>
+
+      <ng-container *ngIf="meeting.image; else fileChooser">
+
+        <ion-col col-12>
+          <img height="130" [src]="meeting.image | sanitize" />
+        </ion-col>
+
+        <button ion-button clear icon-start color="danger" [hidden]="meeting.id" (click)="meeting.image = null">
+          <ion-icon name="remove-circle-outline"></ion-icon>
+          Remove
+        </button>
+
+      </ng-container>
+      <ng-template #fileChooser>
+
+        <button ion-button icon-only color="light" (click)="inputFile.click()">
+          <ion-icon name="image"></ion-icon>
+        </button>
+        <input hidden #inputFile type="file" (change)="openFile($event)" />
+
+      </ng-template>
+
+    </ion-row>
+  </ion-grid>
+
+  <ion-list no-margin>
+
+    <ion-item>
+      <ion-label floating>Title</ion-label>
+      <ion-input type="text" [disabled]="meeting.id" [(ngModel)]="meeting.title"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label floating>Date</ion-label>
+      <ion-datetime displayFormat="DD/MM/YYYY" [disabled]="meeting.id" [(ngModel)]="meeting.date"></ion-datetime>
+    </ion-item>
+
+    <ion-item>
+      <ion-label floating>Hour</ion-label>
+      <ion-datetime displayFormat="HH:mm" minuteValues="0, 15, 30, 45" [disabled]="meeting.id" [(ngModel)]="meeting.hour"></ion-datetime>
+    </ion-item>
+
+    <ng-container *ngIf="!meeting.id; else showVacancies">
+
+      <counter (updateValue)="meeting.limit = $event"></counter>
+
+    </ng-container>
+    <ng-template #showVacancies>
+
+      <ion-item *ngFor="let user of meeting.users">{{ user }}</ion-item>
+
+    </ng-template>
+
+  </ion-list>
+
+  <div margin-top padding-horizontal [ngSwitch]="action">
+
+    <button ion-button block color="primary" (click)="createMeeting()" *ngSwitchCase="actionEnum.Create">Create</button>
+    <button ion-button block color="secondary" (click)="joinMeeting()" *ngSwitchCase="actionEnum.Join">Join</button>
+    <button ion-button block color="danger" (click)="leaveMeeting()" *ngSwitchCase="actionEnum.Leave">Leave</button>
+    <button ion-button block color="danger" *ngSwitchCase="actionEnum.Delete">Delete</button>
+
+  </div>
+
+</ion-content>

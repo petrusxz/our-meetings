@@ -1,0 +1,15 @@
+<ion-row justify-content-center align-items-center>
+  <ion-col col-auto>
+    <button ion-button clear icon-only (click)="decreaseValue()">
+      <ion-icon name="remove"></ion-icon>
+    </button>
+  </ion-col>
+  <ion-col col-auto>
+    {{ value }}
+  </ion-col>
+  <ion-col col-auto>
+    <button ion-button clear icon-only (click)="increaseValue()">
+      <ion-icon name="add"></ion-icon>
+    </button>
+  </ion-col>
+</ion-row>

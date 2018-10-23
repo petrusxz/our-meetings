@@ -2,10 +2,49 @@
 
   <ion-navbar color="primary">
     <ion-title>Meetings</ion-title>
+
+    <ion-buttons end>
+      <button ion-button icon-only (click)="signOut()">
+        <ion-icon name="exit"></ion-icon>
+      </button>
+    </ion-buttons>
+
   </ion-navbar>
 
 </ion-header>
 
 <ion-content padding>
-  
+
+  <ion-row justify-content-center *ngIf="!(meetings | async)">
+    <ion-spinner name="crescent" color="primary"></ion-spinner>
+  </ion-row>
+
+  <ion-row justify-content-center *ngIf="(meetings | async) == 0">
+    <ion-icon size="large" name="md-thumbs-down" color="medium"></ion-icon>
+    <ion-label no-margin color="medium">No meetings.</ion-label>
+  </ion-row>
+
+  <ion-list>
+
+    <ion-item *ngFor="let meeting of meetings | async" navPush="MeetingPage" [navParams]="meeting">
+      <ion-avatar item-start>
+        <img [src]="meeting.image">
+      </ion-avatar>
+      <h2>{{ meeting.title }}</h2>
+      <p>{{ meeting.users.length }} are going until now</p>
+      <p>Vacancies: {{ meeting.limit - meeting.users.length }}</p>
+      <ion-note item-end>
+        {{ meeting.date | date:'dd/MM/yy' }}<br />
+        {{ meeting.hour }}
+      </ion-note>
+    </ion-item>
+
+  </ion-list>
+
+  <ion-fab right bottom>
+    <button ion-fab (click)="navToMeeting()">
+      <ion-icon name="add"></ion-icon>
+    </button>
+  </ion-fab>
+
 </ion-content>
