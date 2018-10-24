@@ -4,6 +4,7 @@ import { MeetingModel } from '../../models/meeting.model';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from 'angularfire2/firestore';
 import { ActionEnum } from '../../models/action-enum.model';
+import { FormBuilder, FormGroup, Validators, AbstractControl, FormControl } from '@angular/forms';
 
 @IonicPage()
 @Component({
@@ -11,6 +12,8 @@ import { ActionEnum } from '../../models/action-enum.model';
   templateUrl: 'meeting.html',
 })
 export class MeetingPage {
+
+  private meetingForm: FormGroup;
 
   private actionEnum = ActionEnum;
   private meeting: MeetingModel;
@@ -22,17 +25,32 @@ export class MeetingPage {
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
+    private formBuilder: FormBuilder,
     private afAuth: AngularFireAuth,
     private afs: AngularFirestore
   ) {
     this.initialize();
+    this.validationForm();
+  }
+
+  validationForm(): void {
+    this.meetingForm = this.formBuilder.group({
+      title: [this.meeting.title, Validators.compose([Validators.required, Validators.minLength(6)])],
+      date: [this.meeting.date, Validators.required],
+      hour: [this.meeting.hour, Validators.required],
+      limit: ['']
+    }, { validator: checkLimit });
+
+    if (this.meeting.id) {
+      this.meetingForm.disable();
+    }
   }
 
   initialize(): void {
     this.meeting = new MeetingModel(this.navParams.data);
+    this.meetingCollection = this.afs.collection<MeetingModel>('meeting');
     this.currentUser = this.afAuth.auth.currentUser;
     this.action = !this.meeting.id ? ActionEnum.Create : this.setMeetingAction();
-    this.meetingCollection = this.afs.collection<MeetingModel>('meeting');
   }
 
   setMeetingAction(): number {
@@ -64,12 +82,21 @@ export class MeetingPage {
   }
 
   async createMeeting(): Promise<void> {
+    if (!this.meetingForm.valid) {
+      console.log(this.meetingForm.valid);
+      console.log(this.meetingForm);
+      return;
+    }
+
     this.meeting.createdBy = this.currentUser.email;
     this.meeting.id = this.meeting.id || this.afs.createId();
+    this.meeting = Object.assign(this.meeting, this.meetingForm.value);
 
+    console.log(this.meeting);
+    
     try {
       await this.saveMeeting();
-      this.meeting = new MeetingModel();
+      this.navCtrl.pop();
     } catch (error) {
       console.error(error);
     }
@@ -101,9 +128,24 @@ export class MeetingPage {
     }
   }
 
+  async deleteMeeting(): Promise<void> {
+    try {
+      await this.meetingCollection.doc(this.meeting.id).delete();
+      this.navCtrl.pop();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   saveMeeting(): Promise<void> {
     return this.meetingCollection
       .doc(this.meeting.id)
       .set(Object.assign({}, this.meeting));
   }
 }
+
+const checkLimit = (control: AbstractControl): { [key: string]: boolean } => {
+  const limit = control.get('limit');
+
+  return limit.value > 4 ? null : { minLimit: true };
+};

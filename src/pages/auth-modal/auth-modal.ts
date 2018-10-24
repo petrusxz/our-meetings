@@ -54,7 +54,7 @@ export class AuthModalPage {
     try {
       // await this.afAuth.auth.sendSignInLinkToEmail(this.user.email, this.actionCodeSettings);
       await this.afAuth.auth.signInWithEmailAndPassword(this.user.email, this.user.password);
-      console.log('E-mail sent');
+      this.viewCtrl.dismiss();
     } catch (error) {
       if (error.code === 'auth/user-not-found') {
         this.signUp();

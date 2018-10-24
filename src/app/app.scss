@@ -26,6 +26,14 @@ div.error-container {
   }
 }
 
+.empty-list {
+  margin-top: 15px;
+  color: map-get($colors, om-grey);
+  ion-icon {
+    font-size: 2em;
+  }
+}
+
 .modal-custom {
   background-color: rgba($color: #000000, $alpha: 0.6);
 

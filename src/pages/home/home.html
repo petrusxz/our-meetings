@@ -19,10 +19,10 @@
     <ion-spinner name="crescent" color="primary"></ion-spinner>
   </ion-row>
 
-  <ion-row justify-content-center *ngIf="(meetings | async) == 0">
-    <ion-icon size="large" name="md-thumbs-down" color="medium"></ion-icon>
-    <ion-label no-margin color="medium">No meetings.</ion-label>
-  </ion-row>
+  <div text-center class="empty-list" *ngIf="(meetings | async) == 0">
+    <ion-icon name="thumbs-down"></ion-icon>
+    <ion-label no-margin>No meetings.</ion-label>
+  </div>
 
   <ion-list>
 

@@ -8,7 +8,6 @@
 
 <ion-content padding>
 
-
   <ion-grid>
     <ion-row justify-content-center>
 
@@ -36,31 +35,42 @@
     </ion-row>
   </ion-grid>
 
+
   <ion-list no-margin>
 
-    <ion-item>
-      <ion-label floating>Title</ion-label>
-      <ion-input type="text" [disabled]="meeting.id" [(ngModel)]="meeting.title"></ion-input>
-    </ion-item>
+    <form [formGroup]="meetingForm">
 
-    <ion-item>
-      <ion-label floating>Date</ion-label>
-      <ion-datetime displayFormat="DD/MM/YYYY" [disabled]="meeting.id" [(ngModel)]="meeting.date"></ion-datetime>
-    </ion-item>
+      <ion-item>
+        <ion-label floating>Title</ion-label>
+        <ion-input type="text" formControlName="title"></ion-input>
+      </ion-item>
 
-    <ion-item>
-      <ion-label floating>Hour</ion-label>
-      <ion-datetime displayFormat="HH:mm" minuteValues="0, 15, 30, 45" [disabled]="meeting.id" [(ngModel)]="meeting.hour"></ion-datetime>
-    </ion-item>
+      <ion-item>
+        <ion-label floating>Date</ion-label>
+        <ion-datetime displayFormat="DD/MM/YYYY" formControlName="date"></ion-datetime>
+      </ion-item>
+
+      <ion-item>
+        <ion-label floating>Hour</ion-label>
+        <ion-datetime displayFormat="HH:mm" minuteValues="0, 15, 30, 45" formControlName="hour"></ion-datetime>
+      </ion-item>
+
+    </form>
 
     <ng-container *ngIf="!meeting.id; else showVacancies">
 
-      <counter (updateValue)="meeting.limit = $event"></counter>
+      <counter (updateValue)="meetingForm.get('limit').setValue($event)"></counter>
 
     </ng-container>
     <ng-template #showVacancies>
 
+      <ion-item-divider margin-top><b>Participants</b></ion-item-divider>
       <ion-item *ngFor="let user of meeting.users">{{ user }}</ion-item>
+
+      <div text-center class="empty-list" *ngIf="!meeting.users.length">
+        <ion-icon name="sad"></ion-icon>
+        <ion-label no-margin>Nobody confirmed yet.</ion-label>
+      </div>
 
     </ng-template>
 
@@ -71,7 +81,7 @@
     <button ion-button block color="primary" (click)="createMeeting()" *ngSwitchCase="actionEnum.Create">Create</button>
     <button ion-button block color="secondary" (click)="joinMeeting()" *ngSwitchCase="actionEnum.Join">Join</button>
     <button ion-button block color="danger" (click)="leaveMeeting()" *ngSwitchCase="actionEnum.Leave">Leave</button>
-    <button ion-button block color="danger" *ngSwitchCase="actionEnum.Delete">Delete</button>
+    <button ion-button block color="danger" (click)="deleteMeeting()" *ngSwitchCase="actionEnum.Delete">Delete</button>
 
   </div>
 
