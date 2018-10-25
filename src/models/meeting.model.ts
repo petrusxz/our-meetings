@@ -7,6 +7,7 @@ export class MeetingModel {
     hour: string = null;
     limit: number = null;
     users: Array<string> = [];
+    topics: Array<string> = [];
 
     constructor(values: Object = {}) {
         Object.keys(this).forEach(key => {

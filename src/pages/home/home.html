@@ -24,11 +24,25 @@
     <ion-label no-margin>No meetings.</ion-label>
   </div>
 
+  <ion-toolbar class="topics-slide" *ngIf="previewTopics">
+    <ion-row>
+      <ion-col>
+        <p>{{ previewTopics }}</p>
+      </ion-col>
+      <ion-col col-auto>
+        <button ion-button clear icon-only (click)="stopTopicsSlide()">
+          <ion-icon name="close"></ion-icon>
+        </button>
+      </ion-col>
+    </ion-row>
+  </ion-toolbar>
+
   <ion-list>
 
-    <ion-item *ngFor="let meeting of meetings | async" navPush="MeetingPage" [navParams]="meeting">
+    <ion-item *ngFor="let meeting of meetings | async" (tap)="navToMeeting(meeting)" (press)="slideTopics(meeting)"
+      [style.backgroundColor]="activeMeeting === meeting.id ? '#f8f9fb' : 'white'">
       <ion-avatar item-start>
-        <img [src]="meeting.image">
+        <img [src]="meeting.image" />
       </ion-avatar>
       <h2>{{ meeting.title }}</h2>
       <p>{{ meeting.users.length }} are going until now</p>
@@ -38,6 +52,10 @@
         {{ meeting.hour }}
       </ion-note>
     </ion-item>
+
+    <ion-infinite-scroll (ionInfinite)="loadMoreMeetings($event)">
+      <ion-infinite-scroll-content loadingSpinner="crescent"></ion-infinite-scroll-content>
+    </ion-infinite-scroll>
 
   </ion-list>
 

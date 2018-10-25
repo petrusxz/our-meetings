@@ -4,7 +4,7 @@ import { MeetingModel } from '../../models/meeting.model';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from 'angularfire2/firestore';
 import { ActionEnum } from '../../models/action-enum.model';
-import { FormBuilder, FormGroup, Validators, AbstractControl, FormControl } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 
 @IonicPage()
 @Component({
@@ -27,7 +27,7 @@ export class MeetingPage {
     public navParams: NavParams,
     private formBuilder: FormBuilder,
     private afAuth: AngularFireAuth,
-    private afs: AngularFirestore
+    private afs: AngularFirestore,
   ) {
     this.initialize();
     this.validationForm();
@@ -35,10 +35,12 @@ export class MeetingPage {
 
   validationForm(): void {
     this.meetingForm = this.formBuilder.group({
+      image: [this.meeting.image, Validators.required],
       title: [this.meeting.title, Validators.compose([Validators.required, Validators.minLength(6)])],
       date: [this.meeting.date, Validators.required],
       hour: [this.meeting.hour, Validators.required],
-      limit: ['']
+      limit: [''],
+      topics: ['', Validators.required]
     }, { validator: checkLimit });
 
     if (this.meeting.id) {
@@ -47,7 +49,7 @@ export class MeetingPage {
   }
 
   initialize(): void {
-    this.meeting = new MeetingModel(this.navParams.data);
+    this.meeting = new MeetingModel(this.navParams.get('data') || {});
     this.meetingCollection = this.afs.collection<MeetingModel>('meeting');
     this.currentUser = this.afAuth.auth.currentUser;
     this.action = !this.meeting.id ? ActionEnum.Create : this.setMeetingAction();
@@ -76,6 +78,7 @@ export class MeetingPage {
     reader.onload = e => {
       const base64 = reader.result as string;
       this.meeting.image = base64;
+      this.meetingForm.get('image').setValue(base64);
     };
 
     reader.readAsDataURL(file);
@@ -83,8 +86,6 @@ export class MeetingPage {
 
   async createMeeting(): Promise<void> {
     if (!this.meetingForm.valid) {
-      console.log(this.meetingForm.valid);
-      console.log(this.meetingForm);
       return;
     }
 
@@ -92,8 +93,6 @@ export class MeetingPage {
     this.meeting.id = this.meeting.id || this.afs.createId();
     this.meeting = Object.assign(this.meeting, this.meetingForm.value);
 
-    console.log(this.meeting);
-    
     try {
       await this.saveMeeting();
       this.navCtrl.pop();
@@ -141,6 +140,10 @@ export class MeetingPage {
     return this.meetingCollection
       .doc(this.meeting.id)
       .set(Object.assign({}, this.meeting));
+  }
+
+  onTopicsInput(event: Array<string>): void {
+    this.meetingForm.get('topics').setValue(event);
   }
 }
 

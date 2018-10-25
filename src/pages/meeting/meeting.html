@@ -11,13 +11,13 @@
   <ion-grid>
     <ion-row justify-content-center>
 
-      <ng-container *ngIf="meeting.image; else fileChooser">
+      <ng-container *ngIf="meetingForm.get('image').value; else fileChooser">
 
         <ion-col col-12>
           <img height="130" [src]="meeting.image | sanitize" />
         </ion-col>
 
-        <button ion-button clear icon-start color="danger" [hidden]="meeting.id" (click)="meeting.image = null">
+        <button ion-button clear icon-start color="danger" [hidden]="meeting.id" (click)="meetingForm.get('image').reset()">
           <ion-icon name="remove-circle-outline"></ion-icon>
           Remove
         </button>
@@ -57,8 +57,10 @@
 
     </form>
 
+    <ion-tags-input margin maxTags="6" [(ngModel)]="meeting.topics" [placeholder]="'Add Topics'" [once]="'true'" (onChange)="onTopicsInput($event)"></ion-tags-input>
+    
     <ng-container *ngIf="!meeting.id; else showVacancies">
-
+      
       <counter (updateValue)="meetingForm.get('limit').setValue($event)"></counter>
 
     </ng-container>
@@ -78,10 +80,18 @@
 
   <div margin-top padding-horizontal [ngSwitch]="action">
 
-    <button ion-button block color="primary" (click)="createMeeting()" *ngSwitchCase="actionEnum.Create">Create</button>
-    <button ion-button block color="secondary" (click)="joinMeeting()" *ngSwitchCase="actionEnum.Join">Join</button>
-    <button ion-button block color="danger" (click)="leaveMeeting()" *ngSwitchCase="actionEnum.Leave">Leave</button>
-    <button ion-button block color="danger" (click)="deleteMeeting()" *ngSwitchCase="actionEnum.Delete">Delete</button>
+    <button ion-button block color="primary" (click)="createMeeting()" *ngSwitchCase="actionEnum.Create">
+      Create
+    </button>
+    <button ion-button block color="secondary" (click)="joinMeeting()" *ngSwitchCase="actionEnum.Join">
+      Join
+    </button>
+    <button ion-button block color="danger" (click)="leaveMeeting()" *ngSwitchCase="actionEnum.Leave">
+      Leave
+    </button>
+    <button ion-button block color="danger" (click)="deleteMeeting()" *ngSwitchCase="actionEnum.Delete">
+      Delete
+    </button>
 
   </div>
 

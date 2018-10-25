@@ -1,5 +1,11 @@
 page-home {
-    ion-note {
-        font-size: 0.8em;
-    }
+  ion-note {
+    font-size: 0.8em;
+  }
+
+  .topics-slide {
+    position: fixed;
+    top: 55px;
+    left: 0;
+  }
 }

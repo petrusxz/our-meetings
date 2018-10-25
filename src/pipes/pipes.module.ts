@@ -1,8 +1,16 @@
 import { NgModule } from '@angular/core';
 import { SanitizerPipe } from './sanitizer/sanitizer';
+import { EmojiPipe } from './emoji/emoji';
+
 @NgModule({
-	declarations: [SanitizerPipe],
+	declarations: [
+		SanitizerPipe,
+		EmojiPipe
+	],
 	imports: [],
-	exports: [SanitizerPipe]
+	exports: [
+		SanitizerPipe,
+		EmojiPipe
+	]
 })
-export class PipesModule {}
+export class PipesModule { }
