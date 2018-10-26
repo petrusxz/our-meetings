@@ -8,19 +8,6 @@ import {
 import { AngularFirestoreCollection, AngularFirestore, QueryDocumentSnapshot } from 'angularfire2/firestore';
 import { MeetingModel } from '../../models/meeting.model';
 import { AngularFireAuth } from 'angularfire2/auth';
-import { fromEvent } from 'rxjs';
-import {
-  animate,
-  state,
-  style,
-  transition,
-  trigger
-} from '@angular/animations';
-
-enum VisibilityState {
-  Visible = 'visible',
-  Hidden = 'hidden'
-}
 
 enum Direction {
   Up = 'up',
@@ -30,23 +17,11 @@ enum Direction {
 @IonicPage()
 @Component({
   selector: 'page-home',
-  templateUrl: 'home.html',
-  animations: [
-    trigger('toggle', [
-      state(
-        VisibilityState.Hidden,
-        style({ opacity: 0, transform: 'translateY(-100%)' })
-      ),
-      state(
-        VisibilityState.Visible,
-        style({ opacity: 1, transform: 'translateY(0)' })
-      ),
-      transition('* => *', animate('200ms ease-in'))
-    ])
-  ]
+  templateUrl: 'home.html'
 })
 export class HomePage {
 
+  items = new Array(40);
   @ViewChild(Content) content: Content;
 
   private isVisible = true;

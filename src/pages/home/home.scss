@@ -25,4 +25,8 @@ page-home {
     transform: translateY(-100%);
     transition: all .8s ease-in-out;
   }
+
+  ion-col {
+    min-width: 500px;
+  }
 }

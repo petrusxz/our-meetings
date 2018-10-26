@@ -19,10 +19,10 @@
     <ion-spinner name="crescent" color="primary"></ion-spinner>
   </ion-row>
 
-  <div text-center class="empty-list" *ngIf="(meetings | async) == 0">
+  <!-- <div text-center class="empty-list" *ngIf="(meetings | async) == 0">
     <ion-icon name="thumbs-down"></ion-icon>
     <ion-label no-margin>No meetings.</ion-label>
-  </div>
+  </div> -->
 
   <ion-toolbar class="topics-slide" *ngIf="previewTopics">
     <ion-row>
@@ -52,6 +52,15 @@
         {{ meeting.hour }}
       </ion-note>
     </ion-item>
+
+    <ion-grid>
+      <ion-row>
+        <ion-col col-12 col-sm *ngFor="let item of items">
+          OOOOOOOOO
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
 
     <ion-infinite-scroll (ionInfinite)="loadMoreMeetings($event)">
       <ion-infinite-scroll-content loadingSpinner="crescent"></ion-infinite-scroll-content>
