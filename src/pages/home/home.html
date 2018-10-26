@@ -1,20 +1,20 @@
-<ion-header>
-
-  <ion-navbar color="primary">
-    <ion-title>Meetings</ion-title>
-
-    <ion-buttons end>
-      <button ion-button icon-only (click)="signOut()">
-        <ion-icon name="exit"></ion-icon>
-      </button>
-    </ion-buttons>
-
-  </ion-navbar>
-
-</ion-header>
-
 <ion-content padding>
 
+  <ion-header [ngClass]="{'hide': !isVisible}">
+  
+    <ion-navbar color="primary">
+      <ion-title>Meetings</ion-title>
+  
+      <ion-buttons end>
+        <button ion-button icon-only (click)="signOut()">
+          <ion-icon name="exit"></ion-icon>
+        </button>
+      </ion-buttons>
+  
+    </ion-navbar>
+  
+  </ion-header>
+      
   <ion-row justify-content-center *ngIf="!(meetings | async)">
     <ion-spinner name="crescent" color="primary"></ion-spinner>
   </ion-row>

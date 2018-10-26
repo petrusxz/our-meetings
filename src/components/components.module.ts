@@ -3,11 +3,15 @@ import { CounterComponent } from './counter/counter';
 import { IonicApp, IonicModule } from 'ionic-angular';
 
 @NgModule({
-	declarations: [CounterComponent],
+	declarations: [
+		CounterComponent,
+	],
 	imports: [
 		IonicModule
 	],
 	bootstrap: [IonicApp],
-	exports: [CounterComponent]
+	exports: [
+		CounterComponent,
+	]
 })
-export class ComponentsModule {}
+export class ComponentsModule { }

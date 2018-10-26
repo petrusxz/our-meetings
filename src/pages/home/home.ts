@@ -1,17 +1,55 @@
-import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, InfiniteScroll } from 'ionic-angular';
+import { Component, ViewChild, ChangeDetectorRef, HostBinding } from '@angular/core';
+import { IonicPage, NavController, NavParams, InfiniteScroll, Content } from 'ionic-angular';
 import { Observable, Subject, Subscription, interval } from 'rxjs';
-import { scan, map, take, startWith } from 'rxjs/operators';
+import {
+  scan, map, take, startWith, distinctUntilChanged,
+  filter, pairwise, share, throttleTime
+} from 'rxjs/operators';
 import { AngularFirestoreCollection, AngularFirestore, QueryDocumentSnapshot } from 'angularfire2/firestore';
 import { MeetingModel } from '../../models/meeting.model';
 import { AngularFireAuth } from 'angularfire2/auth';
+import { fromEvent } from 'rxjs';
+import {
+  animate,
+  state,
+  style,
+  transition,
+  trigger
+} from '@angular/animations';
+
+enum VisibilityState {
+  Visible = 'visible',
+  Hidden = 'hidden'
+}
+
+enum Direction {
+  Up = 'up',
+  Down = 'down'
+}
 
 @IonicPage()
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html',
+  animations: [
+    trigger('toggle', [
+      state(
+        VisibilityState.Hidden,
+        style({ opacity: 0, transform: 'translateY(-100%)' })
+      ),
+      state(
+        VisibilityState.Visible,
+        style({ opacity: 1, transform: 'translateY(0)' })
+      ),
+      transition('* => *', animate('200ms ease-in'))
+    ])
+  ]
 })
 export class HomePage {
+
+  @ViewChild(Content) content: Content;
+
+  private isVisible = true;
 
   private meetings: Observable<MeetingModel[]>;
   private meetingCollection: AngularFirestoreCollection<MeetingModel>;
@@ -30,8 +68,13 @@ export class HomePage {
     public navParams: NavParams,
     private afs: AngularFirestore,
     private afAuth: AngularFireAuth,
+    private cd: ChangeDetectorRef
   ) {
     this.initialize();
+  }
+
+  ionViewDidLoad(): void {
+    this.stickyHeader();
   }
 
   initialize(): void {
@@ -81,7 +124,7 @@ export class HomePage {
       });
   }
 
-  slideTopics(meeting: MeetingModel): void {  
+  slideTopics(meeting: MeetingModel): void {
     this.stopTopicsSlide();
     this.activeMeeting = meeting.id;
 
@@ -100,6 +143,32 @@ export class HomePage {
     this.previewTopics = null;
     this.activeMeeting = null;
     this.obsSlideTopics.unsubscribe();
+  }
+
+  stickyHeader(): void {
+    const scroll$ = this.content.ionScroll.pipe(
+      throttleTime(10),
+      map(() => this.content.directionY),
+      distinctUntilChanged(),
+      share()
+    );
+
+    const goingUp$ = scroll$.pipe(
+      filter(direction => direction === Direction.Up)
+    );
+
+    const goingDown$ = scroll$.pipe(
+      filter(direction => direction === Direction.Down)
+    );
+
+    goingUp$.subscribe(() => {
+      this.isVisible = true;
+      this.cd.detectChanges();
+    });
+    goingDown$.subscribe(() => {
+      this.isVisible = false;
+      this.cd.detectChanges();
+    });
   }
 
   navToMeeting(meeting: MeetingModel = null): void {
